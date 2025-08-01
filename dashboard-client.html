@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IndustroLink | طالب خدمة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl; /* Right-to-left for Arabic */
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3b82f6; /* Blue-500 */
+      border-radius: 10px;
+    }
+    .sidebar-link.active {
+      background-color: #eff6ff; /* Blue-50 */
+      color: #2563eb; /* Blue-600 */
+      font-weight: 600;
+      border-right: 4px solid #3b82f6; /* Blue-500 */
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 text-gray-800">
+  <div class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-xl p-6 flex flex-col justify-between rounded-l-lg">
+      <div>
+        <h2 class="text-3xl font-extrabold text-blue-700 mb-8 text-center">
+          <i class="fas fa-hard-hat text-blue-500 mr-2"></i> IndustroLink
+        </h2>
+        <nav class="space-y-3">
+          <button onclick="showSection('post-service', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-plus-circle ml-3 text-xl"></i> نشر طلب خدمة
+          </button>
+          <button onclick="showSection('responses', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-reply ml-3 text-xl"></i> الردود المستلمة
+          </button>
+          <button onclick="showSection('my-requests', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-file-alt ml-3 text-xl"></i> طلباتي
+          </button>
+          <button onclick="window.location.href='chat.html'" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-comments ml-3 text-xl"></i> الدردشة
+          </button>
+        </nav>
+      </div>
+      <div class="mt-8 text-center">
+        <button class="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-200 shadow-md">
+          <i class="fas fa-sign-out-alt ml-2"></i> تسجيل خروج
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-1 p-8 overflow-y-auto">
+      <!-- Post Service Request -->
+      <section id="post-service" class="fade-in">
+        <h2 class="text-xl font-bold mb-4">نشر طلب خدمة</h2>
+        <form class="bg-white p-4 rounded shadow space-y-4" onsubmit="submitServiceRequest(event)">
+          <input type="text" id="service-title" placeholder="عنوان الخدمة" class="w-full p-2 border rounded" required />
+          <textarea id="service-details" placeholder="تفاصيل الخدمة المطلوبة" class="w-full p-2 border rounded" required></textarea>
+          <input type="text" id="worker-type" placeholder="نوع العامل أو الفريلانسر المطلوب" class="w-full p-2 border rounded" />
+          <input type="text" id="location" placeholder="الموقع الجغرافي أو المدينة" class="w-full p-2 border rounded" />
+          <input type="number" id="quantity" placeholder="الكمية المطلوبة" class="w-full p-2 border rounded" min="1" value="1" required />
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">نشر</button>
+        </form>
+      </section>
+
+      <!-- View Responses -->
+      <section id="responses" class="hidden fade-in">
+        <h2 class="text-xl font-bold mb-4">الردود المستلمة</h2>
+        <div class="bg-white p-4 rounded shadow space-y-4" id="response-list">
+          <!-- الردود ستظهر هنا -->
+        </div>
+      </section>
+
+      <!-- My Requests -->
+      <section id="my-requests" class="hidden fade-in">
+        <h2 class="text-xl font-bold mb-4">طلباتي</h2>
+        <div class="bg-white p-4 rounded shadow space-y-4" id="my-requests-list">
+          <!-- الطلبات ستظهر هنا -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    const myRequests = [];
+
+    function showSection(id) {
+      document.querySelectorAll("main section").forEach(section => section.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+    }
+
+    function submitServiceRequest(event) {
+      event.preventDefault();
+      const title = document.getElementById('service-title').value;
+      const details = document.getElementById('service-details').value;
+      const workerType = document.getElementById('worker-type').value;
+      const location = document.getElementById('location').value;
+      const quantity = document.getElementById('quantity').value;
+
+      // إضافة الطلب إلى قائمة الطلبات
+      myRequests.push({ title, details, workerType, location, quantity });
+      updateMyRequestsList();
+
+      // إعادة تعيين النموذج
+      document.getElementById('service-title').value = '';
+      document.getElementById('service-details').value = '';
+      document.getElementById('worker-type').value = '';
+      document.getElementById('location').value = '';
+      document.getElementById('quantity').value = '1';
+    }
+
+    function updateMyRequestsList() {
+      const myRequestsList = document.getElementById('my-requests-list');
+      myRequestsList.innerHTML = ''; // مسح القائمة الحالية
+
+      if (myRequests.length === 0) {
+        myRequestsList.innerHTML = '<p class="text-gray-500 text-center">لا توجد طلبات بعد.</p>';
+        return;
+      }
+
+      myRequests.forEach(request => {
+        const requestItem = document.createElement('div');
+        requestItem.className = 'border-b pb-4';
+        requestItem.innerHTML = `
+          <h3 class="font-semibold">${request.title}</h3>
+          <p>تفاصيل: ${request.details}</p>
+          <p>نوع العامل: ${request.workerType}</p>
+          <p>الموقع: ${request.location}</p>
+          <p>الكمية: ${request.quantity}</p>
+        `;
+        myRequestsList.appendChild(requestItem);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => showSection("post-service"));
+  </script>
+</body>
+</html>

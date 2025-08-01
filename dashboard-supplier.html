@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IndustroLink | مورد</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Cairo', sans-serif; direction: rtl; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+    .sidebar-link.active {
+      background-color: #eff6ff; /* Blue-50 */
+      color: #2563eb; /* Blue-600 */
+      font-weight: 600;
+      border-right: 4px solid #3b82f6; /* Blue-500 */
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 text-gray-800">
+  <div class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-xl p-6 flex flex-col justify-between rounded-l-lg">
+      <div>
+        <h2 class="text-3xl font-extrabold text-blue-700 mb-8 text-center">
+          <i class="fas fa-hard-hat text-blue-500 mr-2"></i> IndustroLink
+        </h2>
+        <nav class="space-y-3">
+          <button onclick="showSection('my-products', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-box ml-3 text-xl"></i> منتجاتي
+          </button>
+          <button onclick="showSection('add-product', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-plus-circle ml-3 text-xl"></i> إضافة منتج جديد
+          </button>
+          <button onclick="showSection('orders', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-shopping-cart ml-3 text-xl"></i> الطلبات
+          </button>
+          <button onclick="window.location.href='chat.html'" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-comments ml-3 text-xl"></i> الدردشة مع المصانع
+          </button>
+        </nav>
+      </div>
+      <div class="mt-8 text-center">
+        <button class="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-200 shadow-md">
+          <i class="fas fa-sign-out-alt ml-2"></i> تسجيل خروج
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-1 p-8 overflow-y-auto">
+      <!-- Section: My Products -->
+      <section id="my-products" class="fade-in hidden">
+        <h2 class="text-xl font-bold mb-4">منتجاتي</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- المنتجات ستظهر هنا -->
+        </div>
+      </section>
+
+      <!-- Section: Add Product -->
+      <section id="add-product" class="hidden fade-in">
+        <h2 class="text-xl font-bold mb-4">إضافة منتج</h2>
+        <form class="bg-white p-4 rounded shadow space-y-4">
+          <input type="text" placeholder="اسم المنتج" class="w-full p-2 border rounded" required>
+          <input type="number" placeholder="الكمية المتاحة" class="w-full p-2 border rounded" required>
+          <input type="number" placeholder="السعر للوحدة" class="w-full p-2 border rounded" required>
+          <textarea placeholder="تفاصيل المنتج" class="w-full p-2 border rounded"></textarea>
+          <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">نشر المنتج</button>
+        </form>
+      </section>
+
+      <!-- Section: Orders -->
+      <section id="orders" class="hidden fade-in">
+        <h2 class="text-xl font-bold mb-4">الطلبات</h2>
+        <div class="bg-white p-4 rounded shadow">
+          <ul class="space-y-2">
+            <!-- الطلبات ستظهر هنا -->
+          </ul>
+        </div>
+      </section>
+
+      <!-- Section: Factory Chats -->
+      <section id="factory-chats" class="hidden fade-in flex">
+        <div class="w-1/3 bg-gray-100 p-4 rounded-lg shadow-md">
+          <h2 class="text-xl font-bold mb-4">المحادثات</h2>
+          <div id="chat-list" class="space-y-2">
+            <!-- قائمة المحادثات ستظهر هنا -->
+          </div>
+        </div>
+        <div class="flex-1 bg-white p-4 rounded-lg shadow-md ml-4 flex flex-col h-[calc(100vh-100px)]">
+          <h2 class="text-xl font-bold mb-4" id="chat-title">اختر محادثة</h2>
+          <div id="chat-messages" class="flex-1 border border-gray-200 rounded-lg p-4 overflow-y-auto bg-gray-50 mb-6 shadow-inner">
+            <!-- الرسائل ستظهر هنا -->
+          </div>
+          <div class="flex gap-3">
+            <input type="text" id="chat-input" placeholder="اكتب رسالتك هنا..." class="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+            <button onclick="sendMessage()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md">
+              <i class="fas fa-paper-plane ml-2"></i> إرسال
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      function showSection(id, clickedElement) {
+        document.querySelectorAll("main section").forEach(section => section.classList.add("hidden"));
+        document.getElementById(id).classList.remove("hidden");
+
+        // Remove active class from all sidebar links
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+          link.classList.remove('active');
+        });
+
+        // Add active class to the clicked link
+        clickedElement.classList.add('active');
+      }
+      window.showSection = showSection;
+      showSection("my-products", document.querySelector('.sidebar-link')); // Load default section
+    });
+
+    function sendMessage() {
+      const messageInput = document.getElementById('chat-input');
+      const message = messageInput.value.trim();
+      if (message) {
+        const chatMessages = document.getElementById('chat-messages');
+        const messageItem = document.createElement('div');
+        messageItem.className = 'flex justify-start mb-4';
+        messageItem.innerHTML = `<div class="bg-blue-200 text-blue-900 p-3 rounded-lg max-w-xs shadow-sm"><strong>أنت:</strong> ${message}</div>`;
+        chatMessages.appendChild(messageItem);
+        messageInput.value = ''; // إعادة تعيين حقل الإدخال
+        chatMessages.scrollTop = chatMessages.scrollHeight; // التمرير لأسفل
+      }
+    }
+  </script>
+</body>
+</html>

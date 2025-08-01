@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الدردشة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; direction: rtl; }
+    .chat-container { display: flex; height: 100vh; }
+    .chat-list {
+      width: 300px;
+      background-color: #f9fafb;
+      border-right: 1px solid #e5e7eb;
+      overflow-y: auto;
+    }
+    .chat-messages {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .message { margin-bottom: 10px; }
+    .message .sender { font-weight: bold; }
+    .message .text {
+      background-color: #e0f2fe;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    .input-container {
+      display: flex;
+      margin-top: auto;
+      padding: 10px;
+      border-top: 1px solid #e5e7eb;
+      background-color: #f9fafb;
+    }
+    .input-container input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+    .input-container button {
+      background-color: #3b82f6;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .input-container button:hover { background-color: #2563eb; }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+  <div class="chat-container">
+    <div class="chat-list p-4">
+      <h2 class="text-xl font-bold mb-4">المحادثات</h2>
+      <ul id="chat-list" class="space-y-2"></ul>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <h2 class="text-xl font-bold mb-4" id="chat-title">اختر محادثة</h2>
+      <div id="messages" class="flex-1 overflow-y-auto"></div>
+      <div class="input-container">
+        <input type="text" id="chat-input" placeholder="اكتب رسالتك هنا..." />
+        <button onclick="sendMessage()">إرسال</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUser = null;
+    let currentChatUser = null;
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        loadChats();
+      } else {
+        window.location.href = 'auth.html';
+      }
+    });
+
+    function loadChats() {
+      db.collection('chats')
+        .where('users', 'array-contains', currentUser.uid)
+        .onSnapshot(snapshot => {
+          const chatList = document.getElementById('chat-list');
+          chatList.innerHTML = '';
+          snapshot.forEach(doc => {
+            const chatData = doc.data();
+            const otherUser = chatData.users.find(u => u !== currentUser.uid);
+            db.collection('users').doc(otherUser).get().then(userDoc => {
+              const li = document.createElement('li');
+              li.textContent = userDoc.data().displayName || 'مستخدم';
+              li.className = 'cursor-pointer p-2 bg-white rounded hover:bg-gray-100';
+              li.onclick = () => selectChat(doc.id, userDoc.data().displayName);
+              chatList.appendChild(li);
+            });
+          });
+        });
+    }
+
+    function selectChat(chatId, userName) {
+      currentChatUser = chatId;
+      document.getElementById('chat-title').innerText = `محادثة مع ${userName}`;
+      const messagesContainer = document.getElementById('messages');
+      messagesContainer.innerHTML = '';
+
+      db.collection('chats').doc(chatId).collection('messages')
+        .orderBy('timestamp')
+        .onSnapshot(snapshot => {
+          messagesContainer.innerHTML = '';
+          snapshot.forEach(doc => {
+            const msg = doc.data();
+            const div = document.createElement('div');
+            div.className = 'message';
+            div.innerHTML = `<span class="sender">${msg.sender === currentUser.uid ? 'أنت' : userName}:</span> <span class="text">${msg.text}</span>`;
+            messagesContainer.appendChild(div);
+          });
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (text && currentChatUser) {
+        db.collection('chats').doc(currentChatUser).collection('messages').add({
+          text: text,
+          sender: currentUser.uid,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        input.value = '';
+      }
+    }
+  </script>
+</body>
+</html>

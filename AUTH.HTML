@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IndustroLink - Auth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md p-6 bg-white shadow-md rounded">
+      <h1 class="text-2xl font-bold text-center text-blue-600 mb-4" id="form-title">تسجيل حساب</h1>
+      <form id="signup-form" class="space-y-4">
+        <input type="text" id="full-name" placeholder="الاسم الكامل" class="w-full p-2 border rounded" required>
+        <input type="email" id="email" placeholder="البريد الإلكتروني" class="w-full p-2 border rounded" required>
+        <input type="password" id="password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
+        <select id="account-type" class="w-full p-2 border rounded">
+          <option value="company">مصنع / شركة</option>
+          <option value="supplier">مورد</option>
+          <option value="worker">عامل ماهر</option>
+          <option value="client">ناشر وظائف</option>
+        </select>
+        <button class="w-full bg-blue-600 text-white py-2 rounded">تسجيل حساب</button>
+        <p class="text-center text-sm">هل لديك حساب؟ <a href="#" id="show-login" class="text-blue-600">تسجيل الدخول</a></p>
+      </form>
+
+      <form id="login-form" class="space-y-4 hidden">
+        <input type="email" id="login-email" placeholder="البريد الإلكتروني" class="w-full p-2 border rounded" required>
+        <input type="password" id="login-password" placeholder="كلمة المرور" class="w-full p-2 border rounded" required>
+        <button class="w-full bg-blue-600 text-white py-2 rounded">تسجيل الدخول</button>
+        <p class="text-center text-sm">ليس لديك حساب؟ <a href="#" id="show-signup" class="text-blue-600">سجّل الآن</a></p>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8TbLs0IAqrnFYos7TPJ_G1N33Zv4wN1o",
+      authDomain: "industrolink-67598.firebaseapp.com",
+      projectId: "industrolink-67598",
+      storageBucket: "industrolink-67598.appspot.com",
+      messagingSenderId: "904792303444",
+      appId: "1:904792303444:web:5077d3b983ec58cc798ac1",
+      databaseURL: "https://industrolink-67598-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    document.getElementById('signup-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const name = document.getElementById('full-name').value;
+      const type = document.getElementById('account-type').value;
+
+      createUserWithEmailAndPassword(auth, email, password).then(cred => {
+        const uid = cred.user.uid;
+        set(ref(db, 'users/' + uid), {
+          email,
+          name,
+          type
+        }).then(() => {
+          redirectToDashboard(type);
+        });
+      }).catch(err => alert(err.message));
+    });
+
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      signInWithEmailAndPassword(auth, email, password).then(cred => {
+        get(ref(db, 'users/' + cred.user.uid)).then(snapshot => {
+          const type = snapshot.val().type;
+          redirectToDashboard(type);
+        });
+      }).catch(err => alert(err.message));
+    });
+
+    function redirectToDashboard(type) {
+      const map = {
+        'company': 'dashboard-company.html',
+        'supplier': 'dashboard-supplier.html',
+        'worker': 'dashboard-worker.html',
+        'client': 'dashboard-client.html'
+      };
+      window.location.href = map[type] || 'dashboard.html';
+    }
+
+    document.getElementById('show-login').addEventListener('click', () => {
+      document.getElementById('signup-form').classList.add('hidden');
+      document.getElementById('login-form').classList.remove('hidden');
+      document.getElementById('form-title').textContent = 'تسجيل الدخول';
+    });
+
+    document.getElementById('show-signup').addEventListener('click', () => {
+      document.getElementById('signup-form').classList.remove('hidden');
+      document.getElementById('login-form').classList.add('hidden');
+      document.getElementById('form-title').textContent = 'تسجيل حساب';
+    });
+  </script>
+</body>
+</html>

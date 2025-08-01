@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>لوحة التحكم للعامل - IndustroLink</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Google Font: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl; /* Right-to-left for Arabic */
+    }
+    /* Custom scrollbar for better aesthetics */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3b82f6; /* Blue-500 */
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0; /* Gray-200 */
+    }
+    .sidebar-link.active {
+      background-color: #eff6ff; /* Blue-50 */
+      color: #2563eb; /* Blue-600 */
+      font-weight: 600;
+      border-right: 4px solid #3b82f6; /* Blue-500 */
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 text-gray-800">
+  <div class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-xl p-6 flex flex-col justify-between rounded-l-lg">
+      <div>
+        <h2 class="text-3xl font-extrabold text-blue-700 mb-8 text-center">
+          <i class="fas fa-hard-hat text-blue-500 mr-2"></i> IndustroLink
+        </h2>
+        <nav class="space-y-3">
+          <a href="#" onclick="showSection('profile', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-user-circle ml-3 text-xl"></i> الملف الشخصي
+          </a>
+          <a href="#" onclick="showSection('available-jobs', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-briefcase ml-3 text-xl"></i> وظائف متاحة
+          </a>
+          <a href="#" onclick="showSection('my-applications', this)" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-file-alt ml-3 text-xl"></i> طلباتي
+          </a>
+          <a href="chat.html" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+            <i class="fas fa-comments ml-3 text-xl"></i> الدردشة
+          </a>
+        </nav>
+      </div>
+      <div class="mt-8 text-center">
+        <button class="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-200 shadow-md">
+          <i class="fas fa-sign-out-alt ml-2"></i> تسجيل خروج
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-1 p-8 overflow-y-auto">
+      <!-- Content will be loaded here dynamically -->
+      <h2 class="text-3xl font-bold text-blue-700 mb-6 flex items-center">
+        <i class="fas fa-user-circle ml-3"></i> مرحبًا بك في لوحة التحكم
+      </h2>
+      <p class="text-lg text-gray-700">اختر قسمًا من القائمة الجانبية للبدء.</p>
+    </main>
+  </div>
+
+  <script>
+    // Define content for each section
+    const sectionsContent = {
+      'profile': `
+        <section class="bg-white p-8 rounded-xl shadow-lg fade-in">
+          <h2 class="text-3xl font-bold text-blue-700 mb-6 flex items-center">
+            <i class="fas fa-user-circle ml-3"></i> الملف الشخصي
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg">
+            <div class="bg-blue-50 p-4 rounded-lg shadow-sm">
+              <p class="text-gray-700 mb-2"><strong>الاسم:</strong> </p>
+              <p class="text-gray-700 mb-2"><strong>المهنة:</strong> </p>
+              <p class="text-gray-700"><strong>الموقع:</strong> </p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-lg shadow-sm">
+              <p class="text-gray-700 mb-2"><strong>المهارات:</strong> </p>
+              <p class="text-gray-700"><strong>يمكنني العمل في:</strong> </p>
+            </div>
+          </div>
+          <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 mt-8 shadow-md">
+            <i class="fas fa-edit ml-2"></i> تعديل الملف الشخصي
+          </button>
+        </section>
+      `,
+      'available-jobs': `
+        <section class="bg-white p-8 rounded-xl shadow-lg fade-in">
+          <h2 class="text-3xl font-bold text-blue-700 mb-6 flex items-center">
+            <i class="fas fa-briefcase ml-3"></i> وظائف متاحة الآن
+          </h2>
+          <div class="space-y-6">
+            <!-- هنا يمكنك إضافة الوظائف المتاحة من الباك إند -->
+          </div>
+        </section>
+      `,
+      'my-applications': `
+        <section class="bg-white p-8 rounded-xl shadow-lg fade-in">
+          <h2 class="text-3xl font-bold text-blue-700 mb-6 flex items-center">
+            <i class="fas fa-file-alt ml-3"></i> طلباتي السابقة
+          </h2>
+          <div class="space-y-4">
+            <!-- هنا يمكنك إضافة الطلبات السابقة من الباك إند -->
+          </div>
+        </section>
+      `,
+      'chat': `
+        <section class="bg-white p-8 rounded-xl shadow-lg fade-in">
+          <h2 class="text-3xl font-bold text-blue-700 mb-6 flex items-center">
+            <i class="fas fa-comments ml-3"></i> الدردشة
+          </h2>
+          <p class="text-lg text-gray-700">للدردشة، يرجى الانتقال إلى صفحة الدردشة.</p>
+        </section>
+      `
+    };
+
+    // Function to display content and manage active link
+    function showSection(sectionId, clickedElement = null) {
+      const mainContent = document.getElementById('main-content');
+      mainContent.innerHTML = sectionsContent[sectionId];
+
+      // Remove active class from all sidebar links
+      document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+      });
+
+      // Add active class to the clicked link
+      if (clickedElement) {
+        clickedElement.classList.add('active');
+      }
+    }
+
+    // Load profile section and set it as active on initial page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const initialLink = document.querySelector('.sidebar-link'); // Select the first link (Profile)
+      if (initialLink) {
+        showSection('profile', initialLink);
+      }
+    });
+  </script>
+</body>
+</html>
